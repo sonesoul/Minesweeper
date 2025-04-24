@@ -61,7 +61,6 @@ namespace Minesweeper.Core
         protected override void Update(GameTime gameTime)
         {
             Time.Update(gameTime);
-            Physics.Update();
             Input.Update(Keyboard.GetState(), Mouse.GetState());
             StepTask.Manager.Update();
         }
