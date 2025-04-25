@@ -9,6 +9,7 @@ using System;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using PixelBox.InputHandling;
+
 namespace Minesweeper.Core
 {
     public class Main : Game

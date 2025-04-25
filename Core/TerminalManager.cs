@@ -51,7 +51,7 @@ namespace Minesweeper.Core
                 }
                 catch (Exception ex)
                 {
-                    Terminal.WriteLine(ex.Message, ConsoleColor.Red).Wait();
+                    Terminal.WriteLine(ex.Message, ConsoleColor.Red);
                 }
             }
         }
