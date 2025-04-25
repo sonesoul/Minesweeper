@@ -9,17 +9,19 @@ namespace Minesweeper
 {
     public class Field
     {
-        public Point Size { get; }
-        public Point CellSize { get; }
+        public static Color RevealedColor { get; } = new(160, 160, 160);
+        public static Color UnrevealedColor { get; } = new(190, 190, 190);
+        public static Color HoverColor { get; } = new(210, 210, 210);
+        public static Color GridColor { get; } = new(130, 130, 130);
+
         public Cell[,] Cells { get; set; }
 
+        public Point Size { get; }
+        public Point CellSize { get; }
+        
+
         public event Action MineRevealed;
-
-        public static Color RevealedColor = new(160, 160, 160);
-        public static Color UnrevealedColor = new(190, 190, 190);
-        public static Color HoverColor = new(210, 210, 210);
-        public static Color GridColor = new(130, 130, 130);
-
+        
         private bool isMinesSpawned = false;
         private int mineCount = 0;
 

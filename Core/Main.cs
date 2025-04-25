@@ -1,5 +1,4 @@
 global using Microsoft.Xna.Framework;
-global using System.Collections;
 global using KernelTerminal;
 global using PixelBox;
 global using PixelBox.Extensions;
@@ -10,9 +9,6 @@ using System;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using PixelBox.InputHandling;
-using KernelTerminal.Execution;
-using Minesweeper.Core.Commands;
-
 namespace Minesweeper.Core
 {
     public class Main : Game
