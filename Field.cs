@@ -240,12 +240,4 @@ namespace Minesweeper
             return !(x < 0 || y < 0 || x >= Size.X || y >= Size.Y);
         }
     }
-
-    public class Cell(bool isMine)
-    {
-        public bool IsMine { get; } = isMine;
-        public bool IsRevealed { get; set; } = false;
-        public bool HasFlag { get; set; } = false;
-        public int AdjacentMines { get; set; } = 0;
-    }
 }
