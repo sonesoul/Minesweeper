@@ -9,6 +9,7 @@ using System;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using PixelBox.InputHandling;
+using System.Collections;
 
 namespace Minesweeper.Core
 {
@@ -37,6 +38,18 @@ namespace Minesweeper.Core
             IsFixedTimeStep = true;
             TargetElapsedTime = TimeSpan.FromSeconds(1f / 60);
             InactiveSleepTime = TimeSpan.Zero;
+
+            Activated += (o, e) =>
+            {
+                static IEnumerator Unlock()
+                {
+                    yield return null;
+                    Game1.IsLocked = false;
+                }
+
+                StepTask.Run(Unlock);
+            };
+            Deactivated += (o, e) => Game1.IsLocked = true;
 
             Content.RootDirectory = "Content";
             Asset.Content = Content;
