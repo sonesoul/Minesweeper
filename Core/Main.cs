@@ -44,12 +44,12 @@ namespace Minesweeper.Core
                 static IEnumerator Unlock()
                 {
                     yield return null;
-                    Game1.IsLocked = false;
+                    GameController.IsLocked = false;
                 }
 
                 StepTask.Run(Unlock);
             };
-            Deactivated += (o, e) => Game1.IsLocked = true;
+            Deactivated += (o, e) => GameController.IsLocked = true;
 
             Content.RootDirectory = "Content";
             Asset.Content = Content;

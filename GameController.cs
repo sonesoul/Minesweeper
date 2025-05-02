@@ -3,13 +3,12 @@ using PixelBox.InputHandling;
 
 namespace Minesweeper
 {
-    public static class Game1
+    public static class GameController
     {
         public static Field Field { get; private set; }
         public static Point FieldSize { get; set; } = new(20);
         public static int MineCount { get; set; } = 99;
         public static bool IsLocked { get; set; } = false;
-
 
 
         [Init]

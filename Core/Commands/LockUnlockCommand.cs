@@ -8,11 +8,11 @@ namespace Minesweeper.Core.Commands
         {
             if (isLock)
             {
-                Game1.IsLocked = true;
+                GameController.IsLocked = true;
             }
             else
             {
-                Game1.IsLocked = false;
+                GameController.IsLocked = false;
             }
         }
     }

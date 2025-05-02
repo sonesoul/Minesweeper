@@ -6,7 +6,7 @@ namespace Minesweeper.Core.Commands
     {
         public override void Execute()
         {
-            Game1.FieldSize = new(int.Parse(RawString));
+            GameController.FieldSize = new(int.Parse(RawString));
         }
     }
 }

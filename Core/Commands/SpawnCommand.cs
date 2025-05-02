@@ -6,7 +6,7 @@ namespace Minesweeper.Core.Commands
     {
         public override void Execute()
         {
-            Game1.Field.SpawnMines(new Vector2(-99));
+            GameController.Field.SpawnMines(new Vector2(-99));
         }
     }
 }

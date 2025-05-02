@@ -6,8 +6,8 @@ namespace Minesweeper.Core.Commands
     {
         public override void Execute()
         {
-            var pos = Game1.Field.TargetCell;
-            Game1.Field.Cells[pos.X, pos.Y].Reveal();
+            var pos = GameController.Field.TargetCell;
+            GameController.Field.Cells[pos.X, pos.Y].Reveal();
         }
     }
 }

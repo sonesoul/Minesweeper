@@ -6,7 +6,7 @@ namespace Minesweeper.Core.Commands
     {
         public override void Execute()
         {
-            Game1.MineCount = int.Parse(RawString);
+            GameController.MineCount = int.Parse(RawString);
         }
     }
 }
