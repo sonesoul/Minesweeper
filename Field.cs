@@ -5,36 +5,17 @@ namespace Minesweeper
 {
     public class Field
     {
-        public static Color RevealedColor { get; } = new(160, 160, 160);
-        public static Color UnrevealedColor { get; } = new(190, 190, 190);
-        public static Color HoverColor { get; } = new(210, 210, 210);
         public static Color GridColor { get; } = new(130, 130, 130);
 
         public Cell[,] Cells { get; set; }
-
+        public Point TargetCell { get; set; } = new Point(0);
         public Point Size { get; }
         public Point CellSize { get; }
-        
 
         public event Action MineRevealed;
         
         private bool isMinesSpawned = false;
         private int mineCount = 0;
-
-        public Point TargetCell { get; set; } = new Point(0);
-
-        public Color[] Colors { get; } =
-        {
-            RevealedColor * 0.95f,
-            Color.Blue,
-            Color.Green,
-            Color.Red,
-            Color.DarkBlue,
-            Color.DarkRed, 
-            Color.DarkCyan,
-            Color.Black, 
-            Color.LightGray,
-        };
 
         public Field(Point size, Point cellSize, int mineCount)
         {
@@ -43,69 +24,34 @@ namespace Minesweeper
             Cells = new Cell[size.X, size.Y];
             this.mineCount = mineCount;
 
-            for (int y = 0; y < Size.Y; y++)
-            {
-                for (int x = 0; x < Size.X; x++)
-                {
-                    Cells[x, y] = new(false);
-                }
-            }
+            ForEachCell((x, y) => Cells[x, y] = new(false));
         }
 
         public void Draw(DrawContext context)
         {
+            ForEachCell((x, y) =>
+            {
+                Point position = CellSize * new Point(x, y);
+                bool highlight = x == TargetCell.X && y == TargetCell.Y;
+
+                Cells[x, y].Draw(
+                    context, 
+                    new Rectangle(position, CellSize), 
+                    position.ToVector2(),
+                    highlight);
+            });
+
+            for (int x = 0; x < Size.X; x++)
+            {
+                Vector2 end = (CellSize * new Point(x, Size.Y)).ToVector2();
+                context.Line(end.WhereY(0), end, GridColor);
+            }
             for (int y = 0; y < Size.Y; y++)
             {
-                for (int x = 0; x < Size.X; x++)
-                {
-                    Cell cell = Cells[x, y];
-                    Color color = UnrevealedColor;
-
-                    if (cell.IsRevealed)
-                        color = RevealedColor;
-                    else if (x == TargetCell.X && y == TargetCell.Y)
-                        color = HoverColor;
-                   
-                    context.Rectangle(new Rectangle(CellSize * new Point(x, y), CellSize), color);
-                    context.Rectangle(new Rectangle(CellSize * new Point(x, y), CellSize), GridColor, 1);
-                    
-                    if (cell.IsRevealed)
-                    {
-                        if (cell.IsMine)
-                        {
-                            context.String(
-                                $"*",
-                                Fonts.Pico8,
-                                CellSize.ToVector2() * new Vector2(x, y),
-                                Color.Red,
-                                new Vector2(1f),
-                                new Vector2(-3, -2));
-                        }
-                        else
-                        {
-                            context.String(
-                                $"{cell.AdjacentMines}", 
-                                Fonts.Pico8, 
-                                CellSize.ToVector2() * new Vector2(x, y), 
-                                Colors[cell.AdjacentMines], 
-                                new Vector2(1f), 
-                                new Vector2(-3, -2));
-                        }
-                    }
-                    else if (cell.HasFlag)
-                    {
-                        context.String(
-                            $"P",
-                            Fonts.Pico8,
-                            CellSize.ToVector2() * new Vector2(x, y),
-                            Color.Red,
-                            new Vector2(1f),
-                            new Vector2(-3, -2));
-                    }
-                }
+                Vector2 end = (CellSize * new Point(Size.X, y)).ToVector2();
+                context.Line(end.WhereX(0), end, GridColor);
             }
         }
-
 
         public void Reveal()
         {
@@ -115,29 +61,6 @@ namespace Minesweeper
             }
 
             Reveal(TargetCell.X, TargetCell.Y);
-        }
-        public void ToggleFlag()
-        {
-            int x = TargetCell.X;
-            int y = TargetCell.Y;
-
-            if (IsInBounds(x, y))
-            {
-                var cell = Cells[x, y];
-                Cells[x, y].HasFlag = !cell.HasFlag;
-            }
-        }
-
-        public void RevealMines()
-        {
-            for (int y = 0; y < Size.Y; y++)
-            {
-                for (int x = 0; x < Size.X; x++)
-                {
-                    if (Cells[x, y].IsMine)
-                        Cells[x, y].IsRevealed = true;
-                }
-            }
         }
 
         public void SpawnMines(Vector2 safeZone)
@@ -160,18 +83,35 @@ namespace Minesweeper
 
             } while (mineCount > 0);
 
+            ForEachCell((x, y) =>
+            {
+                if (Cells[x, y].IsMine)
+                    return;
+
+                Cells[x, y].AdjacentMines = GetAdjacentMines(new Point(x, y));
+            });
+            isMinesSpawned = true;
+        }
+        public Cell GetTargetCell()
+        {
+            int x = TargetCell.X;
+            int y = TargetCell.Y;
+
+            if (IsInBounds(x, y))
+                return Cells[x, y];
+
+            return null;
+        }
+
+        public void ForEachCell(Action<int, int> action)
+        {
             for (int y = 0; y < Size.Y; y++)
             {
                 for (int x = 0; x < Size.X; x++)
                 {
-                    if (Cells[x, y].IsMine)
-                        continue;
-
-                    Cells[x, y].AdjacentMines = GetAdjacentMines(new Point(x, y));
+                    action(x, y);
                 }
             }
-
-            isMinesSpawned = true;
         }
 
         private int GetAdjacentMines(Point pos)
@@ -214,7 +154,7 @@ namespace Minesweeper
             if (cell.IsRevealed)
                 return;
 
-            cell.IsRevealed = true;
+            cell.Reveal();
 
             if (cell.AdjacentMines > 0)
                 return;
@@ -234,7 +174,6 @@ namespace Minesweeper
             }
 
         }
-
         private bool IsInBounds(int x, int y)
         {
             return !(x < 0 || y < 0 || x >= Size.X || y >= Size.Y);

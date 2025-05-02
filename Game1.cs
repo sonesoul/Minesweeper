@@ -30,7 +30,7 @@ namespace Minesweeper
                 if (IsLocked)
                     return;
 
-                Field.ToggleFlag();              
+                Field.GetTargetCell().ToggleFlag();              
             });
 
             Input.Bind(Key.R, KeyPhase.Press, CreateField);
@@ -49,7 +49,7 @@ namespace Minesweeper
 
         private static void OnMineRevealed()
         {
-            Field.RevealMines();
+            Field.ForEachCell((x, y) => Field.Cells[x, y].ToggleMineVisible());
             IsLocked = true;
 
             Field.MineRevealed -= OnMineRevealed;
